@@ -4,7 +4,7 @@ import os
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, Text
 from flask import Flask, request
 
-from docuSign.config.ds_config import DS_CONFIG
+from ds_config import DS_CONFIG
 
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
@@ -31,8 +31,14 @@ def get_api_client_by_jwt_authorization_flow():
     # END OF NOTE
 
     # configure the ApiClient to asynchronously get an access token and store it
-    api_client.configure_jwt_authorization_flow(DS_CONFIG['private_key_filename'], DS_CONFIG['oauth_base_url'],
-                                                DS_CONFIG['integrator_key'], DS_CONFIG['user_admin_id'], 3600)
+
+    # Get the application Path
+    app_path_keys = os.path.dirname(os.path.abspath(__file__)).replace('stable', 'keys/')
+    app_path_keys += DS_CONFIG['private_key_filename']
+
+    api_client.configure_jwt_authorization_flow(app_path_keys, DS_CONFIG['oauth_base_url'],
+                                                DS_CONFIG['integrator_key'],
+                                                DS_CONFIG['user_admin_id'], 3600)
 
     return api_client
 
