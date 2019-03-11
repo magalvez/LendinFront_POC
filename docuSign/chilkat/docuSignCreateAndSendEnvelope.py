@@ -1,7 +1,7 @@
 import sys
-import chilkat
+import docuSign.chilkat
 
-glob = chilkat.CkGlobal()
+glob = docuSign.chilkat.CkGlobal()
 success = glob.UnlockBundle("Anything for 30-day trial")
 if (success != True):
     print(glob.lastErrorText())
@@ -13,7 +13,7 @@ if (status == 2):
 else:
     print("Unlocked in trial mode.")
 
-rest = chilkat.CkRest()
+rest = docuSign.chilkat.CkRest()
 
 #  URL: https://demo.docusign.net/restapi/v2/accounts/4750109/envelopes
 bTls = True
@@ -25,7 +25,7 @@ if (success != True):
     print(rest.lastErrorText())
     sys.exit()
 
-json = chilkat.CkJsonObject()
+json = docuSign.chilkat.CkJsonObject()
 json.UpdateString("emailSubject","DocuSign REST API Quickstart Sample")
 json.UpdateString("emailBlurb","Shows how to create and send an envelope from a document.")
 json.UpdateString("recipients.signers[0].email","sally.smith@example.com")
@@ -41,9 +41,9 @@ rest.AddHeader("X-DocuSign-Authentication","{ \"Username\":\"manuel@lendingfront
 rest.AddHeader("Content-Type","application/json")
 rest.AddHeader("Accept","application/json")
 
-sbRequestBody = chilkat.CkStringBuilder()
+sbRequestBody = docuSign.chilkat.CkStringBuilder()
 json.EmitSb(sbRequestBody)
-sbResponseBody = chilkat.CkStringBuilder()
+sbResponseBody = docuSign.chilkat.CkStringBuilder()
 success = rest.FullRequestSb("POST","/restapi/v2/accounts/8063857/envelopes",sbRequestBody,sbResponseBody)
 if (success != True):
     print(rest.lastErrorText())
@@ -58,7 +58,7 @@ if (respStatusCode >= 400):
     print(sbResponseBody.getAsString())
     sys.exit()
 
-jsonResponse = chilkat.CkJsonObject()
+jsonResponse = docuSign.chilkat.CkJsonObject()
 jsonResponse.LoadSb(sbResponseBody)
 
 envelopeId = jsonResponse.stringOf("envelopeId")

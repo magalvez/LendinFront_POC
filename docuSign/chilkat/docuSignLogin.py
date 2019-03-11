@@ -1,5 +1,5 @@
 import sys
-import chilkat
+import docuSign.chilkat
 # import requests
 
 # url = 'https://demo.docusign.net/restapi/v2/login_information'
@@ -13,7 +13,7 @@ import chilkat
 # print(sid)
 
 
-glob = chilkat.CkGlobal()
+glob = docuSign.chilkat.CkGlobal()
 success = glob.UnlockBundle("Anything for 30-day trial")
 if (success != True):
     print(glob.lastErrorText())
@@ -25,7 +25,7 @@ if (status == 2):
 else:
     print("Unlocked in trial mode.")
 
-rest = chilkat.CkRest()
+rest = docuSign.chilkat.CkRest()
 # ok = rest.UnlockBundle("Anything for 30-day trial")
 #  URL: https://demo.docusign.net/restapi/v2/login_information
 bTls = True
@@ -39,7 +39,7 @@ if (success != True):
 
 rest.AddHeader("X-DocuSign-Authentication","{ \"Username\":\"manuel@lendingfront.com\",  \"Password\":\"l3nd1ngfr0nt\",  \"IntegratorKey\":\"29088eac-3cd3-44e5-8aae-03bcb7287b3f\" }")
 
-sbResponseBody = chilkat.CkStringBuilder()
+sbResponseBody = docuSign.chilkat.CkStringBuilder()
 success = rest.FullRequestNoBodySb("GET","/restapi/v2/login_information",sbResponseBody)
 if (success != True):
     print(rest.lastErrorText())
@@ -54,7 +54,7 @@ if (respStatusCode >= 400):
     print(sbResponseBody.getAsString())
     sys.exit()
 
-jsonResponse = chilkat.CkJsonObject()
+jsonResponse = docuSign.chilkat.CkJsonObject()
 jsonResponse.LoadSb(sbResponseBody)
 
 i = 0
