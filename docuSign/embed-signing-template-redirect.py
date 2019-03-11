@@ -11,6 +11,10 @@ if 'FLASK_ENV' not in os.environ:
 
 
 def get_api_client_by_jwt_authorization_flow():
+    """
+        This method create a ApiClient object and configure it using
+        JWT authorization flow.
+    """
 
     api_client = ApiClient()
     api_client.host = DS_CONFIG['base_path']
@@ -21,7 +25,7 @@ def get_api_client_by_jwt_authorization_flow():
     oauth_login_url = api_client.get_jwt_uri(DS_CONFIG['integrator_key'], DS_CONFIG['redirect_uri'],
                                              DS_CONFIG['oauth_base_url'])
     # open DocuSign OAuth authorization url in the browser, login and grant access
-    # webbrowser.open_new_tab(oauth_login_url)
+    # web_browser.open_new_tab(oauth_login_url)
     print(oauth_login_url)
     # END OF NOTE
 
@@ -33,6 +37,10 @@ def get_api_client_by_jwt_authorization_flow():
 
 
 def get_api_client_by_access_token():
+    """
+        This method create a ApiClient object and configure it using
+        Token Access Control.
+    """
 
     api_client = ApiClient()
     api_client.host = DS_CONFIG['base_path']
