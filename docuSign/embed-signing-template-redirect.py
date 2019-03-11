@@ -1,42 +1,51 @@
 import base64, os
 from flask import Flask, request, redirect
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, \
-    TemplateRole, Text, Title
+    TemplateRole, Text, Title, AuthenticationApi
+from ds_config import DS_CONFIG
 
-
-# Settings
-#
-# Obtain an OAuth access token from https://developers.hqtest.tst/oauth-token-generator
-access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQkAAAABAAUABwCAljUsyKPWSAgAgNZYOguk1kgCALk7xTqm_V1Akk8CFOmsnOEVAAEAAAAYAAEAAAAFAAAADQAkAAAAZjBmMjdmMGUtODU3ZC00YTcxLWE0ZGEtMzJjZWNhZTNhOTc4MACAlP7Tx6PWSDcAxAkY_dTa20i_b-JSx4oGpA.1gu3gjsm7tWzqQZuOEzLjc78zrXtWZA_jQ1CngBgrrMWA_hkJhyVEdvLbpnxNIoQvJ4terxn2sL5nWlifS-_kdom1tvKp7_1gdTUJ-TOtWaxuoTBr3GHfpCTw14DM_1vslx_iqdxOpJOIzc9r862oZOQmcwIuVH7WPdK_sgXQtLbiGav5q9Q3RIyUPQiQE5vpxAP7E29WggP8OzbjitCWOKDTxoAhavZZgfh5Sp5tuHVEiC14NJaTimjboOzFq2kmrLefHIEtUBWomcOrNd7xohxEbT6OFq7wLemzK7l095_v2QWlpZmJ22dheoKMJhZ5SLaBwD6MoIFzPI5szxHiA'
-authentication_method = 'None'
-
-# Obtain your accountId from demo.docusign.com -- the account id is shown in the drop down on the
-# upper right corner of the screen by your picture or the default picture. 
-account_id = '8063857'
-
-# Random number to be assigned to the client
-client_user_id = '1091'
-
-# Base URL to be returned after finish the sign
-base_url = 'http://localhost:5001'
-
-# The API base_path
-base_path = 'https://demo.docusign.net/restapi'
-
-# The Template ID
-template_id = 'd5e617be-da0a-4431-9014-4575282f61d4'
-
-# User and role configuration
-role_name = 'Manager'
-user_name = 'LendingFront'
-user_email = 'lendingfront@mailinator.com'
-
-# Environment configuration
-environment_status = 'sent'
 
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
     os.environ['FLASK_ENV'] = 'development'
+
+
+def get_api_client_by_jwt_authorization_flow():
+
+    api_client = ApiClient()
+    api_client.host = DS_CONFIG['base_path']
+
+    # IMPORTANT NOTE:
+    # the first time you ask for a JWT access token, you should grant access by making the following call
+    # get DocuSign OAuth authorization url:
+    oauth_login_url = api_client.get_jwt_uri(DS_CONFIG['integrator_key'], DS_CONFIG['redirect_uri'],
+                                             DS_CONFIG['oauth_base_url'])
+    # open DocuSign OAuth authorization url in the browser, login and grant access
+    # webbrowser.open_new_tab(oauth_login_url)
+    print(oauth_login_url)
+    # END OF NOTE
+
+    # configure the ApiClient to asynchronously get an access token and store it
+    api_client.configure_jwt_authorization_flow(DS_CONFIG['private_key_filename'], DS_CONFIG['oauth_base_url'],
+                                                DS_CONFIG['integrator_key'], DS_CONFIG['user_admin_id'], 3600)
+
+    return api_client
+
+
+def get_api_client_by_access_token():
+
+    api_client = ApiClient()
+    api_client.host = DS_CONFIG['base_path']
+    api_client.set_default_header("Authorization", "Bearer " + DS_CONFIG['access_token'])
+
+    # authentication_api = AuthenticationApi()
+    # authentication_api.api_client = api_client
+    # access_token = authentication_api.get_o_auth_token()
+
+    # accessToken = api_client.   GetOAuthToken(client_id, client_secret, true, AccessCode);
+    # Console.WriteLine("Access_token: " + accessToken);
+
+    return api_client
 
 
 def embedded_signing_ceremony():
@@ -46,74 +55,62 @@ def embedded_signing_ceremony():
     """
 
     #
-    # Step 1. The envelope definition is created.
+    # Step 1. Create and define the API Client.
+    #
+
+    api_client = get_api_client_by_jwt_authorization_flow()
+    # api_client = get_api_client_by_access_token()
+
+    #
+    # Step 2. The envelope definition is created.
     #         One signHere tab is added.
     #         The document path supplied is relative to the working directory
     #
 
     env_def = EnvelopeDefinition()
     env_def.email_subject = 'PLEASE GOD HELP ME, I NEED THIS WORKING!!'
-    env_def.template_id = template_id
+    env_def.template_id = DS_CONFIG['template_id']
 
     t_role = TemplateRole()
-    t_role.role_name = role_name
-    t_role.name = user_name
-    t_role.email = user_email
-    t_role.client_user_id = client_user_id
-
-    text_example = Text()
-    text_example.tab_label = 'example'
-    text_example.value = 'SIIII GRACIAS DIOS!! -- EXAMPLE'
+    t_role.role_name = DS_CONFIG['signer_role']
+    t_role.name = DS_CONFIG['signer_name']
+    t_role.email = DS_CONFIG['signer_email']
+    t_role.client_user_id = DS_CONFIG['client_user_id']
 
     text_name = Text()
     text_name.tab_label = 'name'
-    text_name.value = 'SIIII GRACIAS DIOS!! -- NAME'
+    text_name.value = 'Jonathan'
 
-    text_name2 = Text()
-    text_name2.tab_label = 'name2'
-    text_name2.value = 'SIIII GRACIAS DIOS!! -- NAME2'
-
-    text = Text()
-    text.document_id = '1'
-    text.page_number = '1'
-    text.recipient_id = '1'
-    text.x_position = '100'
-    text.y_position = '100'
-    text.scale_value = '0.5'
-    text.value = 'THANKS GOD!!'
-
-    title_label = Title()
-    title_label.tab_label = 'lablel_example'
-    title_label.value = 'LendingFront'
+    text_last_name = Text()
+    text_last_name.tab_label = 'lastname'
+    text_last_name.value = 'Vallejo'
 
     tabs = Tabs()
-    tabs.text_tabs = [text_example, text_name, text_name2, text]
-    tabs.title_tabs = [title_label]
+    tabs.text_tabs = [text_name, text_last_name]
     t_role.tabs = tabs
 
     env_def.template_roles = [t_role]
-    env_def.status = environment_status
+    env_def.status = DS_CONFIG['environment_status']
     
     #
-    #  Step 2. Create/send the envelope.
+    #  Step 3. Create/send the envelope.
     #
-    api_client = ApiClient()
-    api_client.host = base_path
-    api_client.set_default_header("Authorization", "Bearer " + access_token)
+    #
 
     envelope_api = EnvelopesApi(api_client)
-    envelope_summary = envelope_api.create_envelope(account_id, envelope_definition=env_def)
+    envelope_summary = envelope_api.create_envelope(DS_CONFIG['account_id'], envelope_definition=env_def)
     envelope_id = envelope_summary.envelope_id
 
     print("Envelope {} has been sent to {} and the summary id: {}".format(envelope_id, t_role.email, envelope_summary))
 
     recipient_view_request = RecipientViewRequest(
-        authentication_method=authentication_method, client_user_id=client_user_id,
-        recipient_id='1', return_url=base_url + '/dsreturn?envelope_id={}'.format(envelope_id),
-        user_name=user_name, email=user_email
+        authentication_method=DS_CONFIG['authentication_method'], client_user_id=DS_CONFIG['client_user_id'],
+        recipient_id='1', return_url=DS_CONFIG['app_url'] + '/dsreturn?envelope_id={}'.format(envelope_id),
+        user_name=DS_CONFIG['signer_name'], email=DS_CONFIG['signer_email']
     )
 
-    results = envelope_api.create_recipient_view(account_id, envelope_id, recipient_view_request=recipient_view_request)
+    results = envelope_api.create_recipient_view(DS_CONFIG['account_id'], envelope_id,
+                                                 recipient_view_request=recipient_view_request)
 
     return results.url
 
@@ -125,13 +122,29 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
     if request.method == 'POST':
-        return redirect(embedded_signing_ceremony(), code=302)
+        val = embedded_signing_ceremony()
+        # return redirect(embedded_signing_ceremony(), code=302)
+        return '''
+    <html lang="en">
+        <body>
+            <form action="{url}" method="post">
+                <input type="submit" value="Sign the document!"
+                    style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
+                <iframe name="LendingFront" src="{val}" height="720" width="720"></iframe>
+            </form>
+        </body>
+    </html>
+                '''.format(url=request.url, val=val)
     else:
         return '''
-            <html lang="en"><body><form action="{url}" method="post">
-            <input type="submit" value="Sign the document!"
-                style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
-            </form></body>
+    <html lang="en">
+        <body>
+            <form action="{url}" method="post">
+                <input type="submit" value="Sign the document!"
+                    style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
+            </form>
+        </body>
+    </html>
         '''.format(url=request.url)
 
 
@@ -140,36 +153,33 @@ def dsreturn():
     print(request.args)
     envelope_id = request.args.get('envelope_id')
 
-    api_client = ApiClient()
-    api_client.host = base_path
-    api_client.set_default_header("Authorization", "Bearer " + access_token)
+    api_client = get_api_client_by_jwt_authorization_flow()
 
     envelope_api = EnvelopesApi(api_client)
-    docs_list = envelope_api.list_documents(account_id, envelope_id)
+    docs_list = envelope_api.list_documents(DS_CONFIG['account_id'], envelope_id)
 
     print("EnvelopeDocumentsResult:\n{0}", docs_list)
 
     document_id = docs_list.envelope_documents[0].document_id
 
-    data = envelope_api.get_document(account_id, document_id, envelope_id)
+    data = envelope_api.get_document(DS_CONFIG['account_id'], document_id, envelope_id)
     print(data)
 
-    base64_file_content = ''
-
-    with open(os.path.join(data), "rb") as file:
-        content_bytes = file.read()
+    with open(os.path.join(data), "rb") as document:
+        content_bytes = document.read()
         base64_file_content = base64.b64encode(content_bytes).decode('ascii')
 
     print(base64_file_content)
 
+    # <p>The signing ceremony was completed with status {event}</p>
+    # <p>This page can also implement post-signing processing.</p>
 
     return '''
-        <html lang="en"><body><p>The signing ceremony was completed with
-          status {event}</p>
-          <p>This page can also implement post-signing processing.</p></body>
-          
-          <iframe name="LendingFront" src="data:application/pdf;base64, {file}" height="700" width="700"></iframe>
-          
+        <html lang="en">
+            <body>
+                <iframe name="LendingFront" src="data:application/pdf;base64, {file}" height="700" width="700"></iframe>
+            </body>
+        </html>          
     '''.format(event=request.args.get('event'), file=base64_file_content)
 
 
