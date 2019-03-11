@@ -4,7 +4,7 @@ import os
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, Text
 from flask import Flask, request
 
-from ds_config import DS_CONFIG
+from docuSign.config.ds_config import DS_CONFIG
 
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
