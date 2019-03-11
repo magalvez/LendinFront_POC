@@ -96,13 +96,16 @@ def embedded_signing_ceremony():
     #
     #  Step 3. Create/send the envelope.
     #
-    #
 
     envelope_api = EnvelopesApi(api_client)
     envelope_summary = envelope_api.create_envelope(DS_CONFIG['account_id'], envelope_definition=env_def)
     envelope_id = envelope_summary.envelope_id
 
     print("Envelope {} has been sent to {} and the summary id: {}".format(envelope_id, t_role.email, envelope_summary))
+
+    #
+    #  Step 4. Create/send the Recipient View Request in order to get a URL to sign the document.
+    #
 
     recipient_view_request = RecipientViewRequest(
         authentication_method=DS_CONFIG['authentication_method'], client_user_id=DS_CONFIG['client_user_id'],
@@ -150,29 +153,46 @@ def homepage():
 
 @app.route('/ds_return', methods=['GET'])
 def ds_return():
+
+    #
+    #  Step 5. Get the envelop id from the request.
+    #
+
     print(request.args)
     envelope_id = request.args.get('envelope_id')
 
+    #
+    # Step 6. Create and define the API Client.
+    #
     api_client = get_api_client_by_jwt_authorization_flow()
+
+    #
+    # Step 7. The envelope definition is created and ready to access list documents
+    #
 
     envelope_api = EnvelopesApi(api_client)
     docs_list = envelope_api.list_documents(DS_CONFIG['account_id'], envelope_id)
 
     print("EnvelopeDocumentsResult:\n{0}", docs_list)
 
+    #
+    # Step 8. Retrieve the document based on list documents and the envelope id
+    #
+
     document_id = docs_list.envelope_documents[0].document_id
 
     data = envelope_api.get_document(DS_CONFIG['account_id'], document_id, envelope_id)
     print(data)
+
+    #
+    # Step 9. Process the document in order to gat a base64 string to be showed into the html iframe
+    #
 
     with open(os.path.join(data), "rb") as document:
         content_bytes = document.read()
         base64_file_content = base64.b64encode(content_bytes).decode('ascii')
 
     print(base64_file_content)
-
-    # <p>The signing ceremony was completed with status {event}</p>
-    # <p>This page can also implement post-signing processing.</p>
 
     return '''
         <html lang="en">

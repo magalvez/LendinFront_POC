@@ -166,9 +166,12 @@ def homepage():
 @app.route('/dsreturn', methods=['GET'])
 def dsreturn():
     return '''
-        <html lang="en"><body><p>The signing ceremony was completed with
-          status {event}</p>
-          <p>This page can also implement post-signing processing.</p></body>
+        <html lang="en">
+            <body>
+                <p>The signing ceremony was completed with status {event}</p>
+                <p>This page can also implement post-signing processing.</p>
+            </body>
+        </html>
     '''.format(event=request.args.get('event'))
 
 
