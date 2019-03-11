@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, redirect
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, \
-    TemplateRole, Text, Title, Signer, SignHere, Recipients
+    TemplateRole, Text, Title, Signer, SignHere, Recipients, AuthenticationApi
 
 
 # Settings
@@ -121,6 +121,13 @@ def embedded_signing_ceremony():
     api_client = ApiClient()
     api_client.host = base_path
     api_client.set_default_header("Authorization", "Bearer " + access_token)
+
+    # authentication_api = AuthenticationApi()
+    # authentication_api.api_client = api_client
+    # access_token = authentication_api.get_o_auth_token()
+
+    # accessToken = api_client.   GetOAuthToken(client_id, client_secret, true, AccessCode);
+    # Console.WriteLine("Access_token: " + accessToken);
 
     envelope_api = EnvelopesApi(api_client)
     envelope_summary = envelope_api.create_envelope(account_id, envelope_definition=env_def)

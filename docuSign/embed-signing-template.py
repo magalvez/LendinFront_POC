@@ -5,7 +5,7 @@ from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, Te
 # Settings
 #
 # Obtain an OAuth access token from https://developers.hqtest.tst/oauth-token-generator
-access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQkAAAABAAUABwCAljUsyKPWSAgAgNZYOguk1kgCALk7xTqm_V1Akk8CFOmsnOEVAAEAAAAYAAEAAAAFAAAADQAkAAAAZjBmMjdmMGUtODU3ZC00YTcxLWE0ZGEtMzJjZWNhZTNhOTc4MACAlP7Tx6PWSDcAxAkY_dTa20i_b-JSx4oGpA.1gu3gjsm7tWzqQZuOEzLjc78zrXtWZA_jQ1CngBgrrMWA_hkJhyVEdvLbpnxNIoQvJ4terxn2sL5nWlifS-_kdom1tvKp7_1gdTUJ-TOtWaxuoTBr3GHfpCTw14DM_1vslx_iqdxOpJOIzc9r862oZOQmcwIuVH7WPdK_sgXQtLbiGav5q9Q3RIyUPQiQE5vpxAP7E29WggP8OzbjitCWOKDTxoAhavZZgfh5Sp5tuHVEiC14NJaTimjboOzFq2kmrLefHIEtUBWomcOrNd7xohxEbT6OFq7wLemzK7l095_v2QWlpZmJ22dheoKMJhZ5SLaBwD6MoIFzPI5szxHiA'
+access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwAAoNVrE6TWSAgAAOD4eVak1kgCALk7xTqm_V1Akk8CFOmsnOEVAAEAAAAYAAEAAAAFAAAADQAkAAAAZjBmMjdmMGUtODU3ZC00YTcxLWE0ZGEtMzJjZWNhZTNhOTc4EgABAAAACwAAAGludGVyYWN0aXZlMACA3AtqE6TWSDcAxAkY_dTa20i_b-JSx4oGpA.0PEf38MnbSrmPPyCjO-hEDLnkIRahNWwIjJb5gVJCehYHlrpeMpbLf06-5Gcb4VxMOF9Arscft3mOvffbhrMx3pabV5a4axr977yy_d59rHO0Botw9ohQ4kZNPiCjMR_1FQW72kQ4sLAfw7ImEm4WAC6f0K47wd25wE5-qL36k9j5uHO7nu2XH1DzP4DgDozN8EhEG6thHq_P7xGG4YOT5A_h1lrn-nnmeKj4S2EpJ7cC-PRDd6K5AQY8SCNM7VscXSAs78ij-l8WBlQZJdVzimFggkDLuwQkzTYaO2Vn8VYLQ8lVUS9fOv0QhjKnBwL8o1M_5-5EDp4xFW2_2U54w'
 
 # Obtain your accountId from demo.docusign.com -- the account id is shown in the drop down on the
 # upper right corner of the screen by your picture or the default picture.
@@ -21,12 +21,12 @@ base_url = 'http://localhost:5001'
 base_path = 'https://demo.docusign.net/restapi'
 
 # The Template ID
-template_id = 'd5e617be-da0a-4431-9014-4575282f61d4'
+template_id = '57e2a00c-b8b5-415c-8c8b-db31d75e8253'
 
 # User and role configuration
 role_name = 'Manager'
-user_name = 'LendingFront'
-user_email = 'lendingfront@mailinator.com'
+user_name = 'Manuel Galvez'
+user_email = 'manuel@lendingfront.com'
 
 # Environment configuration
 environment_status = 'sent'
@@ -104,7 +104,7 @@ def embedded_signing_ceremony():
 
     print("Envelope {} has been sent to {}".format(envelope_id, t_role.email))
 
-    return ''
+    return 'Works!'
 
 
 # Mainline

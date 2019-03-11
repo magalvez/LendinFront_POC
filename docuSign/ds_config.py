@@ -18,11 +18,12 @@ DS_CONFIG = {
     'app_url': 'http://localhost:5001',  # The url of the application. Eg http://localhost:5000
     # NOTE: You must add a Redirect URI of appUrl/ds/callback to your Integration Key.
     #       Example: http:#localhost:5000/ds/callback
-    'redirect_uri': 'http://localhost:5001/dsreturn',  # Redirect URI
+    'redirect_uri': 'http://localhost:5001/ds_return',  # Redirect URI
     'base_path': 'https://demo.docusign.net/restapi',  # The API base_path
     'oauth_base_url': 'account-d.docusign.com',
     'authentication_method': 'None',
     # Obtain an OAuth access token from https://developers.hqtest.tst/oauth-token-generator
+    # Or https://developers.docusign.com/oauth-token-generator
     'access_token': 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwAAoNVrE6TWSAgAAOD4eVak1kgCALk7xTqm_V1Akk8CFOmsnOEVAAEAAAAYAAEAAAAFAAAADQAkAAAAZjBmMjdmMGUtODU3ZC00YTcxLWE0ZGEtMzJjZWNhZTNhOTc4EgABAAAACwAAAGludGVyYWN0aXZlMACA3AtqE6TWSDcAxAkY_dTa20i_b-JSx4oGpA.0PEf38MnbSrmPPyCjO-hEDLnkIRahNWwIjJb5gVJCehYHlrpeMpbLf06-5Gcb4VxMOF9Arscft3mOvffbhrMx3pabV5a4axr977yy_d59rHO0Botw9ohQ4kZNPiCjMR_1FQW72kQ4sLAfw7ImEm4WAC6f0K47wd25wE5-qL36k9j5uHO7nu2XH1DzP4DgDozN8EhEG6thHq_P7xGG4YOT5A_h1lrn-nnmeKj4S2EpJ7cC-PRDd6K5AQY8SCNM7VscXSAs78ij-l8WBlQZJdVzimFggkDLuwQkzTYaO2Vn8VYLQ8lVUS9fOv0QhjKnBwL8o1M_5-5EDp4xFW2_2U54w',
     'session_secret': '{SESSION_SECRET}',  # Secret for encrypting session cookie content
                                            # Use any random string of characters

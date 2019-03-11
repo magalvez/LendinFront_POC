@@ -1,9 +1,10 @@
-import base64, os
-from flask import Flask, request, redirect
-from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, \
-    TemplateRole, Text, Title, AuthenticationApi
-from ds_config import DS_CONFIG
+import base64
+import os
 
+from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, Text
+from flask import Flask, request
+
+from ds_config import DS_CONFIG
 
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
@@ -46,13 +47,6 @@ def get_api_client_by_access_token():
     api_client.host = DS_CONFIG['base_path']
     api_client.set_default_header("Authorization", "Bearer " + DS_CONFIG['access_token'])
 
-    # authentication_api = AuthenticationApi()
-    # authentication_api.api_client = api_client
-    # access_token = authentication_api.get_o_auth_token()
-
-    # accessToken = api_client.   GetOAuthToken(client_id, client_secret, true, AccessCode);
-    # Console.WriteLine("Access_token: " + accessToken);
-
     return api_client
 
 
@@ -67,7 +61,6 @@ def embedded_signing_ceremony():
     #
 
     api_client = get_api_client_by_jwt_authorization_flow()
-    # api_client = get_api_client_by_access_token()
 
     #
     # Step 2. The envelope definition is created.
@@ -76,7 +69,7 @@ def embedded_signing_ceremony():
     #
 
     env_def = EnvelopeDefinition()
-    env_def.email_subject = 'PLEASE GOD HELP ME, I NEED THIS WORKING!!'
+    env_def.email_subject = 'Sign the document needed to finish the loan process!!'
     env_def.template_id = DS_CONFIG['template_id']
 
     t_role = TemplateRole()
@@ -113,7 +106,7 @@ def embedded_signing_ceremony():
 
     recipient_view_request = RecipientViewRequest(
         authentication_method=DS_CONFIG['authentication_method'], client_user_id=DS_CONFIG['client_user_id'],
-        recipient_id='1', return_url=DS_CONFIG['app_url'] + '/dsreturn?envelope_id={}'.format(envelope_id),
+        recipient_id='1', return_url=DS_CONFIG['app_url'] + '/ds_return?envelope_id={}'.format(envelope_id),
         user_name=DS_CONFIG['signer_name'], email=DS_CONFIG['signer_email']
     )
 
@@ -130,19 +123,18 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
     if request.method == 'POST':
-        val = embedded_signing_ceremony()
-        # return redirect(embedded_signing_ceremony(), code=302)
+        url_doc_signed = embedded_signing_ceremony()
         return '''
     <html lang="en">
         <body>
             <form action="{url}" method="post">
                 <input type="submit" value="Sign the document!"
                     style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
-                <iframe name="LendingFront" src="{val}" height="720" width="720"></iframe>
+                <iframe name="LendingFront" src="{url_doc_signed}" height="720" width="720"></iframe>
             </form>
         </body>
     </html>
-                '''.format(url=request.url, val=val)
+                '''.format(url=request.url, url_doc_signed=url_doc_signed)
     else:
         return '''
     <html lang="en">
@@ -156,8 +148,8 @@ def homepage():
         '''.format(url=request.url)
 
 
-@app.route('/dsreturn', methods=['GET'])
-def dsreturn():
+@app.route('/ds_return', methods=['GET'])
+def ds_return():
     print(request.args)
     envelope_id = request.args.get('envelope_id')
 
