@@ -83,7 +83,7 @@ def embedded_signing_ceremony():
     text_name.value = 'Jonathan'
 
     text_last_name = Text()
-    text_last_name.tab_label = 'lastname'
+    text_last_name.tab_label = 'last_name'
     text_last_name.value = 'Vallejo'
 
     tabs = Tabs()
