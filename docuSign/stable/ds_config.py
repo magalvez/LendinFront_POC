@@ -6,15 +6,17 @@ import os
 DS_CONFIG = {
     # Obtain your accountId from demo.docusign.com -- the account id is shown in the drop down on the
     # upper right corner of the screen by your picture or the default picture.
-    'account_id': '8063857',
-    'template_id': 'd5e617be-da0a-4431-9014-4575282f61d4',  # The Template ID
-    'integrator_key': '29088eac-3cd3-44e5-8aae-03bcb7287b3f',  # The app's DocuSign integration key
-    'user_admin_id': '3ac53bb9-fda6-405d-924f-0214e9ac9ce1',  # User Admin ID
-    'secret_key': '454b8cdd-fb3f-4e06-af31-383a7769353f',  # The app's DocuSign integration key's secret
+    'account_id': '8100898',
+    'api_account_id': '918f638e-30fd-41c9-b6b2-e3f56f9c831b',
+    'template_id': '36fd5b8d-b750-4606-8e38-93692f37c9fe',  # The Template ID
+    'integrator_key': '25a63cfa-c9b6-4411-85ac-257996135e16',  # The app's DocuSign integration key
+    'user_admin_id': '00057a6e-9fe8-406e-accc-12570b8a22d2',  # User Admin ID
+    'secret_key': '49fe683f-9593-4094-85e1-c921b462f09a',  # The app's DocuSign integration key's secret
+    'key_pair_id': '64a563b9-e622-45e9-b7d4-568dbc3a6717',  # ID for RSA Key Pair
     # User and role configuration (Signer)
-    'signer_email': 'lendingfront@mailinator.com',
-    'signer_name': 'LendingFront',
-    'signer_role': 'Manager',
+    'signer_role': 'Non-Employee',
+    'signer_name': 'x',  # LendingFront Team
+    'signer_email': 'technology+bfs@lendingfront.com',
     'app_url': 'http://localhost:5001',  # The url of the application. Eg http://localhost:5000
     # NOTE: You must add a Redirect URI of appUrl/ds/callback to your Integration Key.
     #       Example: http:#localhost:5000/ds/callback
@@ -28,7 +30,7 @@ DS_CONFIG = {
     'session_secret': '{SESSION_SECRET}',  # Secret for encrypting session cookie content
                                            # Use any random string of characters
     'private_key_filename': 'docusign_private_key_lendingfront.txt',  # Private RSA Key file
-    'client_user_id': '1091',  # Random number to be assigned to the client
+    'client_user_id': '985612',  # Random number to be assigned to the client
     'allow_silent_authentication': True,  # a user can be silently authenticated if they have an
     # active login session on another tab of the same browser
     'target_account_id': None,  # Set if you want a specific DocuSign AccountId,
