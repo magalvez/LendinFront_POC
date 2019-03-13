@@ -8,7 +8,7 @@ DS_CONFIG = {
     # upper right corner of the screen by your picture or the default picture.
     'account_id': '8100898',
     'api_account_id': '918f638e-30fd-41c9-b6b2-e3f56f9c831b',
-    'template_id': '36fd5b8d-b750-4606-8e38-93692f37c9fe',  # The Template ID
+    'template_id': 'bfabb622-2aec-4c10-8861-0fa0cba325b7',  # The Template ID
     'integrator_key': '25a63cfa-c9b6-4411-85ac-257996135e16',  # The app's DocuSign integration key
     'user_admin_id': '00057a6e-9fe8-406e-accc-12570b8a22d2',  # User Admin ID
     'secret_key': '49fe683f-9593-4094-85e1-c921b462f09a',  # The app's DocuSign integration key's secret
