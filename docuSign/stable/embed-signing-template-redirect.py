@@ -204,7 +204,7 @@ def embedded_signing_ceremony():
     env_def.custom_fields = custom_fields
 
     if new_envelope_id != '':
-        env_def.status = 'sent'
+        env_def.status = 'created'
     else:
         env_def.status = 'sent'
     
