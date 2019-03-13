@@ -14,9 +14,11 @@ DS_CONFIG = {
     'secret_key': '49fe683f-9593-4094-85e1-c921b462f09a',  # The app's DocuSign integration key's secret
     'key_pair_id': '64a563b9-e622-45e9-b7d4-568dbc3a6717',  # ID for RSA Key Pair
     # User and role configuration (Signer)
-    'signer_role': 'Non-Employee',
-    'signer_name': 'x',  # LendingFront Team
-    'signer_email': 'technology+bfs@lendingfront.com',
+    'signer_role': 'Guarantor',
+    'signer_name': 'Christopher Alan Farage',  # LendingFront Team
+    'signer_email': 'christopheraf@bfs.com',
+    'client_user_id': '54657688',  # Random number to be assigned to the client
+    'routing_order': '1',  # Order of the recipient
     'app_url': 'http://localhost:5001',  # The url of the application. Eg http://localhost:5000
     # NOTE: You must add a Redirect URI of appUrl/ds/callback to your Integration Key.
     #       Example: http:#localhost:5000/ds/callback
@@ -30,7 +32,6 @@ DS_CONFIG = {
     'session_secret': '{SESSION_SECRET}',  # Secret for encrypting session cookie content
                                            # Use any random string of characters
     'private_key_filename': 'docusign_private_key_lendingfront.txt',  # Private RSA Key file
-    'client_user_id': '985612',  # Random number to be assigned to the client
     'allow_silent_authentication': True,  # a user can be silently authenticated if they have an
     # active login session on another tab of the same browser
     'target_account_id': None,  # Set if you want a specific DocuSign AccountId,

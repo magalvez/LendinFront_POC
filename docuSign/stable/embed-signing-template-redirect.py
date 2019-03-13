@@ -1,7 +1,8 @@
 import base64
 import os
 
-from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, Text
+from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, \
+    Text, Recipients, TextCustomField, CustomFields
 from flask import Flask, request
 
 from ds_config import DS_CONFIG
@@ -64,9 +65,12 @@ def embedded_signing_ceremony():
 
     #
     # Step 1. Create and define the API Client.
+    #         Create EnvelopesAPI instance
     #
 
     api_client = get_api_client_by_jwt_authorization_flow()
+
+    envelope_api = EnvelopesApi(api_client)
 
     #
     # Step 2. The envelope definition is created.
@@ -74,15 +78,32 @@ def embedded_signing_ceremony():
     #         The document path supplied is relative to the working directory
     #
 
-    env_def = EnvelopeDefinition()
+    new_envelope_id = ''
+    if new_envelope_id != '':
+        env_def = envelope_api.get_envelope(account_id=DS_CONFIG['account_id'], envelope_id=new_envelope_id)
+    else:
+        env_def = EnvelopeDefinition()
+
+    # env_def.envelope_id = 'a51d1069-e43c-48cc-8c49-f5b30c20c1a5'
     env_def.email_subject = 'Sign the document needed to finish the loan process!!'
     env_def.template_id = DS_CONFIG['template_id']
 
     t_role = TemplateRole()
-    t_role.role_name = DS_CONFIG['signer_role']
-    t_role.name = DS_CONFIG['signer_name']
-    t_role.email = DS_CONFIG['signer_email']
-    t_role.client_user_id = DS_CONFIG['client_user_id']
+
+    if new_envelope_id != '':
+
+        t_role.role_name = 'Owner'
+        t_role.name = 'Allan Tam'
+        t_role.email = 'allan@lendingfront.com'
+        t_role.client_user_id = '234567'
+        t_role.routing_order = '2'
+    else:
+
+        t_role.role_name = DS_CONFIG['signer_role']
+        t_role.name = DS_CONFIG['signer_name']
+        t_role.email = DS_CONFIG['signer_email']
+        t_role.client_user_id = DS_CONFIG['client_user_id']
+        t_role.routing_order = DS_CONFIG['routing_order']
 
     text_business_legal_name = Text()
     text_business_legal_name.tab_label = 'business_legal_name'
@@ -164,15 +185,26 @@ def embedded_signing_ceremony():
                       text_processing_fee, text_origination_fee, text_loan_frequency, text_loan_payment_amount,
                       text_maturity_date_1, text_maturity_date_2]
     t_role.tabs = tabs
+    # t_role2.tabs = tabs
 
     env_def.template_roles = [t_role]
-    env_def.status = DS_CONFIG['environment_status']
+    # env_def.recipients = Recipients(signers=)
+
+    business_address_env = TextCustomField(name='business_address_env', value='SIIIII THANKS GOD!!', show='true')
+    custom_fields = CustomFields(text_custom_fields=[business_address_env])
+
+    env_def.custom_fields = custom_fields
+
+    if new_envelope_id != '':
+        env_def.status = 'sent'
+    else:
+        env_def.status = 'sent'
     
     #
     #  Step 3. Create/send the envelope.
     #
 
-    envelope_api = EnvelopesApi(api_client)
+    #  envelope_api = EnvelopesApi(api_client)
     envelope_summary = envelope_api.create_envelope(DS_CONFIG['account_id'], envelope_definition=env_def)
     envelope_id = envelope_summary.envelope_id
 
