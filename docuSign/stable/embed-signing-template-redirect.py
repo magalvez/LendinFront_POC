@@ -1,6 +1,10 @@
 import base64
 import os
 
+from EncryptionHelper import AESCipher
+
+from jwcrypto import jwt, jwk
+
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, \
     Text, Recipients, TextCustomField, CustomFields
 from flask import Flask, request
@@ -17,6 +21,8 @@ def get_api_client_by_jwt_authorization_flow():
         This method create a ApiClient object and configure it using
         JWT authorization flow.
     """
+
+    cyfrer = AESCipher()
 
     api_client = ApiClient()
     api_client.host = DS_CONFIG['base_path']
@@ -37,9 +43,11 @@ def get_api_client_by_jwt_authorization_flow():
     app_path_keys = os.path.dirname(os.path.abspath(__file__)).replace('stable', 'keys/')
     app_path_keys += DS_CONFIG['private_key_filename']
 
-    api_client.configure_jwt_authorization_flow(app_path_keys, DS_CONFIG['oauth_base_url'],
+    id_rsa = jwk.JWK.from_pem(cyfrer.decrypt(DS_CONFIG['id_rsa']))
+
+    api_client.configure_jwt_authorization_flow('', DS_CONFIG['oauth_base_url'],
                                                 DS_CONFIG['integrator_key'],
-                                                DS_CONFIG['user_admin_id'], 3600)
+                                                DS_CONFIG['user_admin_id'], 3600, key_bytes=id_rsa)
 
     return api_client
 
