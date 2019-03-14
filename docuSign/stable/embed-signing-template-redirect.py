@@ -3,10 +3,9 @@ import os
 
 from EncryptionHelper import AESCipher
 
-from jwcrypto import jwt, jwk
+from jwcrypto import jwk
 
-from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, \
-    Text, Recipients, TextCustomField, CustomFields
+from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Tabs, RecipientViewRequest, TemplateRole, Text
 from flask import Flask, request
 
 from ds_config import DS_CONFIG
@@ -92,12 +91,9 @@ def embedded_signing_ceremony():
 
     #
     # Step 1. Create and define the API Client.
-    #         Create EnvelopesAPI instance
     #
 
     api_client = get_api_client_by_jwt_authorization_flow()
-
-    envelope_api = EnvelopesApi(api_client)
 
     #
     # Step 2. The envelope definition is created.
@@ -105,32 +101,25 @@ def embedded_signing_ceremony():
     #         The document path supplied is relative to the working directory
     #
 
-    new_envelope_id = ''
-    if new_envelope_id != '':
-        env_def = envelope_api.get_envelope(account_id=DS_CONFIG['account_id'], envelope_id=new_envelope_id)
-    else:
-        env_def = EnvelopeDefinition()
-
-    # env_def.envelope_id = 'a51d1069-e43c-48cc-8c49-f5b30c20c1a5'
+    env_def = EnvelopeDefinition()
     env_def.email_subject = 'Sign the document needed to finish the loan process!!'
     env_def.template_id = DS_CONFIG['template_id']
 
+    #
+    # Step 3. Create a TemplateRole object that is going to be used to configure
+    # the user that is going to sign the document
+    #
+
     t_role = TemplateRole()
+    t_role.role_name = DS_CONFIG['signer_role']
+    t_role.name = DS_CONFIG['signer_name']
+    t_role.email = DS_CONFIG['signer_email']
+    t_role.client_user_id = DS_CONFIG['client_user_id']
+    t_role.routing_order = DS_CONFIG['routing_order']
 
-    if new_envelope_id != '':
-
-        t_role.role_name = 'Owner'
-        t_role.name = 'Allan Tam'
-        t_role.email = 'allan@lendingfront.com'
-        t_role.client_user_id = '234567'
-        t_role.routing_order = '2'
-    else:
-
-        t_role.role_name = DS_CONFIG['signer_role']
-        t_role.name = DS_CONFIG['signer_name']
-        t_role.email = DS_CONFIG['signer_email']
-        t_role.client_user_id = DS_CONFIG['client_user_id']
-        t_role.routing_order = DS_CONFIG['routing_order']
+    #
+    #   Step 4. Create the Text objects to mapping the customizable parameters defined in the sandbox template
+    #
 
     text_business_legal_name = Text()
     text_business_legal_name.tab_label = 'business_legal_name'
@@ -212,33 +201,32 @@ def embedded_signing_ceremony():
                       text_processing_fee, text_origination_fee, text_loan_frequency, text_loan_payment_amount,
                       text_maturity_date_1, text_maturity_date_2]
     t_role.tabs = tabs
-    # t_role2.tabs = tabs
 
     env_def.template_roles = [t_role]
-    # env_def.recipients = Recipients(signers=)
 
-    business_address_env = TextCustomField(name='business_address_env', value='SIIIII THANKS GOD!!', show='true')
-    custom_fields = CustomFields(text_custom_fields=[business_address_env])
-
-    env_def.custom_fields = custom_fields
-
-    if new_envelope_id != '':
-        env_def.status = 'created'
-    else:
-        env_def.status = 'sent'
+    #
+    # We can define two types of status 'created' or 'sent'
+    #   'created':
+    #   The recipient is in a draft state. This is only associated with draft envelopes
+    #   (envelopes with a Created status).
+    #
+    #   'sent':
+    #   The recipient has been sent an email notification that it is their turn to sign an envelope
+    #
+    env_def.status = 'sent'
     
     #
-    #  Step 3. Create/send the envelope.
+    #  Step 5. Create/send the EnvelopesAPI instance.
     #
 
-    #  envelope_api = EnvelopesApi(api_client)
+    envelope_api = EnvelopesApi(api_client)
     envelope_summary = envelope_api.create_envelope(DS_CONFIG['account_id'], envelope_definition=env_def)
     envelope_id = envelope_summary.envelope_id
 
     print("Envelope {} has been sent to {} and the summary id: {}".format(envelope_id, t_role.email, envelope_summary))
 
     #
-    #  Step 4. Create/send the Recipient View Request in order to get a URL to sign the document.
+    #  Step 6. Create/send the Recipient View Request in order to get a URL to sign the document.
     #
 
     recipient_view_request = RecipientViewRequest(
@@ -267,7 +255,7 @@ def homepage():
             <form action="{url}" method="post">
                 <input type="submit" value="Sign the document!"
                     style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
-                <iframe name="LendingFront" src="{url_doc_signed}" height="720" width="720"></iframe>
+                <iframe name="LendingFront" src="{url_doc_signed}" height="720" width="800"></iframe>
             </form>
         </body>
     </html>
@@ -289,19 +277,19 @@ def homepage():
 def ds_return():
 
     #
-    #  Step 5. Get the envelop id from the request.
+    #  Step 7. Get the envelop id from the request.
     #
 
     print(request.args)
     envelope_id = request.args.get('envelope_id')
 
     #
-    # Step 6. Create and define the API Client.
+    # Step 8. Create and define the API Client.
     #
     api_client = get_api_client_by_jwt_authorization_flow()
 
     #
-    # Step 7. The envelope definition is created and ready to access list documents
+    # Step 9. The envelope definition is created and ready to access list documents
     #
 
     envelope_api = EnvelopesApi(api_client)
@@ -310,7 +298,7 @@ def ds_return():
     print("EnvelopeDocumentsResult:\n{0}", docs_list)
 
     #
-    # Step 8. Retrieve the document based on list documents and the envelope id
+    # Step 10. Retrieve the document based on list documents and the envelope id
     #
 
     document_id = docs_list.envelope_documents[0].document_id
@@ -319,7 +307,7 @@ def ds_return():
     print(data)
 
     #
-    # Step 9. Process the document in order to gat a base64 string to be showed into the html iframe
+    # Step 11. Process the document in order to gat a base64 string to be showed into the html iframe
     #
 
     with open(os.path.join(data), "rb") as document:
@@ -331,7 +319,7 @@ def ds_return():
     return '''
         <html lang="en">
             <body>
-                <iframe name="LendingFront" src="data:application/pdf;base64, {file}" height="700" width="700"></iframe>
+                <iframe name="LendingFront" src="data:application/pdf;base64, {file}" height="700" width="780"></iframe>
             </body>
         </html>          
     '''.format(event=request.args.get('event'), file=base64_file_content)
