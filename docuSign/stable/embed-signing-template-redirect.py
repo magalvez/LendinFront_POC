@@ -22,6 +22,9 @@ def get_api_client_by_jwt_authorization_flow():
         JWT authorization flow.
     """
 
+    #
+    # Using Crypto to encrypt and decrypt the as example the id RSA key
+    #
     cyfrer = AESCipher()
 
     api_client = ApiClient()
@@ -32,6 +35,7 @@ def get_api_client_by_jwt_authorization_flow():
     # get DocuSign OAuth authorization url:
     oauth_login_url = api_client.get_jwt_uri(DS_CONFIG['integrator_key'], DS_CONFIG['redirect_uri'],
                                              DS_CONFIG['oauth_base_url'])
+
     # open DocuSign OAuth authorization url in the browser, login and grant access
     # web_browser.open_new_tab(oauth_login_url)
     print(oauth_login_url)
@@ -39,11 +43,22 @@ def get_api_client_by_jwt_authorization_flow():
 
     # configure the ApiClient to asynchronously get an access token and store it
 
-    # Get the application Path
+    #
+    # Get the application Path in case we are getting the id RSA from a file
+    # otherwise the value passed on the method should be a empty string.
+    #
+
     app_path_keys = os.path.dirname(os.path.abspath(__file__)).replace('stable', 'keys/')
     app_path_keys += DS_CONFIG['private_key_filename']
 
+    #
+    #   Getting the id RSA encrypted to be used by the JWT process
+    #
     id_rsa = jwk.JWK.from_pem(cyfrer.decrypt(DS_CONFIG['id_rsa']))
+
+    #
+    # Call JWT Authorization and configure it into the API Client
+    #
 
     api_client.configure_jwt_authorization_flow('', DS_CONFIG['oauth_base_url'],
                                                 DS_CONFIG['integrator_key'],
@@ -57,6 +72,10 @@ def get_api_client_by_access_token():
         This method create a ApiClient object and configure it using
         Token Access Control.
     """
+
+    #
+    # Use Access Token Authorization and configure it into the API Client
+    #
 
     api_client = ApiClient()
     api_client.host = DS_CONFIG['base_path']
