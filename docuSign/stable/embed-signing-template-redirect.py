@@ -314,8 +314,6 @@ def ds_return():
         content_bytes = document.read()
         base64_file_content = base64.b64encode(content_bytes).decode('ascii')
 
-    print(base64_file_content)
-
     return '''
         <html lang="en">
             <body>
