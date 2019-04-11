@@ -257,7 +257,7 @@ def generate_recipient_view_request_by_role(envelope_id, envelope_api, role):
     results = envelope_api.create_recipient_view(DS_CONFIG['account_id'], envelope_id,
                                                  recipient_view_request=recipient_view_request)
 
-    print("Results {} {} has been generated".format(role.routing_order, results))
+    print("Results {} {} has been generated".format(role.role_name, results))
     print("############################")
 
     generate_envelop_report_status(envelope_id, envelope_api, role)
@@ -270,7 +270,7 @@ def generate_envelop_report_status(envelope_id, envelope_api, role=None):
     if role is None:
         print("Envelop Results after all signs {}".format(envelope))
     else:
-        print("Envelop Results {} after all signs {}".format(role.routing_order, envelope))
+        print("Envelop Results {} after all signs {}".format(role.role_name, envelope))
 
     print("############################")
 
