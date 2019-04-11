@@ -200,7 +200,7 @@ def generate_template_role_business_guarantor():
 def generate_template_role_guarantor():
 
     t_role = TemplateRole()
-    t_role.role_name = 'Guarantor_1'
+    t_role.role_name = 'Guarantor 1'
     t_role.name = 'Juan Sebastian Fernandez'
     t_role.email = 'checho@lendinfront.com'
     t_role.client_user_id = '54657683'
@@ -212,7 +212,7 @@ def generate_template_role_guarantor():
 def generate_template_role_guarantor_2():
 
     t_role = TemplateRole()
-    t_role.role_name = 'Guarantor_2'
+    t_role.role_name = 'Guarantor 2'
     t_role.name = 'Rafael Nadal'
     t_role.email = 'rafa@lendinfront.com'
     t_role.client_user_id = '54657684'
@@ -224,7 +224,7 @@ def generate_template_role_guarantor_2():
 def generate_template_role_guarantor_3():
 
     t_role = TemplateRole()
-    t_role.role_name = 'Guarantor_3'
+    t_role.role_name = 'Guarantor 3'
     t_role.name = 'Roger Federer'
     t_role.email = 'roger@lendinfront.com'
     t_role.client_user_id = '54657685'
