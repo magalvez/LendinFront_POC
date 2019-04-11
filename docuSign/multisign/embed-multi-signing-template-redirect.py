@@ -200,7 +200,7 @@ def generate_template_role_business_guarantor():
 def generate_template_role_guarantor():
 
     t_role = TemplateRole()
-    t_role.role_name = 'Guarantor'
+    t_role.role_name = 'Guarantor_1'
     t_role.name = 'Juan Sebastian Fernandez'
     t_role.email = 'checho@lendinfront.com'
     t_role.client_user_id = '54657683'
@@ -209,9 +209,33 @@ def generate_template_role_guarantor():
     return t_role
 
 
-def generate_envelop(env_def, envelope_api, business_owner_role, business_guarantor_role, guarantor_role):
+def generate_template_role_guarantor_2():
 
-    env_def.template_roles = [business_owner_role, business_guarantor_role, guarantor_role]
+    t_role = TemplateRole()
+    t_role.role_name = 'Guarantor_2'
+    t_role.name = 'Rafael Nadal'
+    t_role.email = 'rafa@lendinfront.com'
+    t_role.client_user_id = '54657684'
+    t_role.routing_order = '1'
+
+    return t_role
+
+
+def generate_template_role_guarantor_3():
+
+    t_role = TemplateRole()
+    t_role.role_name = 'Guarantor_3'
+    t_role.name = 'Roger Federer'
+    t_role.email = 'roger@lendinfront.com'
+    t_role.client_user_id = '54657685'
+    t_role.routing_order = '1'
+
+    return t_role
+
+
+def generate_envelop(env_def, envelope_api, business_owner_role, business_guarantor_role, guarantor_role, guarantor_role_2, guarantor_role_3):
+
+    env_def.template_roles = [business_owner_role, business_guarantor_role, guarantor_role, guarantor_role_2, guarantor_role_3]
     env_def.status = 'sent'
 
     envelope_summary = envelope_api.create_envelope(DS_CONFIG['account_id'], envelope_definition=env_def)
@@ -266,13 +290,18 @@ def embedded_signing_ceremony():
     business_owner_role = generate_template_role_business_owner()
     business_guarantor_role = generate_template_role_business_guarantor()
     guarantor_role = generate_template_role_guarantor()
+    guarantor_role_2 = generate_template_role_guarantor_2()
+    guarantor_role_3 = generate_template_role_guarantor_3()
 
-    envelope_id = generate_envelop(env_def, envelope_api, business_owner_role, business_guarantor_role, guarantor_role)
-    # envelope_id = ''
+    envelope_id = generate_envelop(env_def, envelope_api, business_owner_role, business_guarantor_role,
+                                   guarantor_role, guarantor_role_2, guarantor_role_3)
+    # envelope_id = 'a7ffa514-5828-4c98-8373-d184d15fda43'
 
     generate_recipient_view_request_by_role(envelope_id, envelope_api, business_owner_role)
     generate_recipient_view_request_by_role(envelope_id, envelope_api, business_guarantor_role)
     generate_recipient_view_request_by_role(envelope_id, envelope_api, guarantor_role)
+    generate_recipient_view_request_by_role(envelope_id, envelope_api, guarantor_role_2)
+    generate_recipient_view_request_by_role(envelope_id, envelope_api, guarantor_role_3)
 
     generate_envelop_report_status(envelope_id, envelope_api)
 
