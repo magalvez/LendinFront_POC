@@ -348,11 +348,14 @@ def generate_recipient_view_request_by_role(envelope_id, envelope_api, role):
 def generate_envelop_report_status(envelope_id, envelope_api, role=None):
 
     envelope = envelope_api.get_envelope(DS_CONFIG['account_id'], envelope_id)
+    envelope_list = envelope_api.list_recipients(DS_CONFIG['account_id'], envelope_id)
 
     if role is None:
         print("Envelop Results after all signs {}".format(envelope))
+        print("Envelop List Results after all signs {}".format(envelope_list))
     else:
         print("Envelop Results {} after all signs {}".format(role.role_name, envelope))
+        print("Envelop List Results {} after all signs {}".format(role.role_name, envelope_list))
 
     print("############################")
 
